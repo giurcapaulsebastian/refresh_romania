@@ -11,6 +11,8 @@ from django.http import HttpResponse
 
 from django.contrib.auth.decorators import login_required
 
+from .decorators import unauthenticated_user, allowed_users, admin_only
+
 def registerPage(request):
     if request.user.is_authenticated:
         return redirect('home')
@@ -54,6 +56,12 @@ def logoutUser(request):
 @login_required(login_url='login')
 def home(request):
     return render(request, 'accounts/dashboard.html')
+
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['users'])
+def profilePage(request):
+    context={}
+    return render(request, 'accounts/profile.html', context)
 
 def products(request):
     return render(request, 'accounts/products.html')
