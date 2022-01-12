@@ -13,6 +13,8 @@ from django.contrib.auth.decorators import login_required
 
 from .decorators import unauthenticated_user, allowed_users, admin_only
 
+import folium
+
 def registerPage(request):
     if request.user.is_authenticated:
         return redirect('home')
@@ -68,3 +70,11 @@ def products(request):
 
 def customer(request):
     return render(request, 'accounts/customer.html')
+
+def map(request):
+    map1 = folium.Map()
+    map1 = map1._repr_html_()
+    context={
+        'map1':map1
+    }
+    return render(request, 'accounts/map.html', context)
