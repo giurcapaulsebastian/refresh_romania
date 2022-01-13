@@ -2,6 +2,8 @@ from django.contrib.auth import decorators
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
+from django.templatetags.static import static
+from refresh_romania import settings
 
 from django.contrib.auth import authenticate, login, logout
 
@@ -14,6 +16,7 @@ from django.contrib.auth.decorators import login_required
 from .decorators import unauthenticated_user, allowed_users, admin_only
 
 import folium
+from folium.features import CustomIcon
 
 def registerPage(request):
     if request.user.is_authenticated:
@@ -65,14 +68,18 @@ def profilePage(request):
     context={}
     return render(request, 'accounts/profile.html', context)
 
-def products(request):
-    return render(request, 'accounts/products.html')
+def events(request):
+    return render(request, 'accounts/events.html')
 
-def customer(request):
-    return render(request, 'accounts/customer.html')
-
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['users','admins'])
 def map(request):
-    map1 = folium.Map()
+    map1 = folium.Map(location=[45.56,25], zoom_start=6)
+    folium.Marker(
+        location=[46.56,25],
+        popup="AICI PLANTEZ COPAC!",
+        icon=folium.Icon(color='green', icon='tree', prefix='fa')
+    ).add_to(map1)
     map1 = map1._repr_html_()
     context={
         'map1':map1
